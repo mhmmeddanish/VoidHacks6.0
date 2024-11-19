@@ -1,0 +1,56 @@
+# Backend Framework
+Django==4.2
+djangorestframework==3.14
+django-cors-headers==4.0
+gunicorn==20.1.0
+
+# Task Scheduling
+celery==5.2.7
+
+# API and HTTP Requests
+requests==2.31.0
+
+# Database
+psycopg2==2.9.7  # PostgreSQL connector
+django-environ==0.9.0  # For environment variable management
+
+# Frontend
+# (Backend dependency for GraphQL, if needed)
+graphene-django==3.2.0
+
+# Authentication and Security
+djangorestframework-simplejwt==5.2.2
+cryptography==41.0.0
+
+# Location Tracking
+geopy==2.3.0
+
+# Cloud Storage
+boto3==1.28.77  # For AWS S3 integration
+
+# Notifications
+firebase-admin==6.2.0  # For Firebase notifications
+
+# AI/ML Libraries
+scikit-learn==1.3.0
+torch==2.0.1
+transformers==4.31.0
+
+# Data Visualization
+plotly==5.17.0
+matplotlib==3.8.0
+
+# Blockchain
+web3==6.5.0  # For Ethereum integration
+
+# Chatbot
+rasa==3.3.1  # If using Rasa chatbot
+
+# Utilities
+python-decouple==3.8  # For managing environment variables
+Pillow==10.1.0  # For image handling
+pdfkit==1.0.1  # For generating PDF reports
+
+# Deployment
+whitenoise==6.5.0  # For static file serving
+psutil==5.9.5  # System monitoring
