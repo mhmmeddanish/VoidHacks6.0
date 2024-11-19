@@ -8,6 +8,7 @@ from mentor_management import mentor_management_page
 from student_tracking import student_tracking_page
 from mca_verification import mca_verification_page
 from dashboard import admin_dashboard
+from instructors import instructor_dashboard
 
 def main():
     st.set_page_config(page_title="Internship Management System", layout="wide")
