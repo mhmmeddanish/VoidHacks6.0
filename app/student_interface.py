@@ -3,6 +3,9 @@ import plotly.graph_objects as go
 from datetime import date, timedelta
 import time
 import matplotlib.pyplot as plt
+import pandas as pd
+import plotly.express as px
+from AI_help import stream_ollama_response
 
 def student_interface():
     # Custom CSS for styling
@@ -37,7 +40,7 @@ def student_interface():
     )
 
     # Header Section
-    st.title("Project Management Dashboard")
+    st.title("Internship Management Dashboard")
 
     # Display Recommended Course (from session state)
     if "recommended_course" in st.session_state:
@@ -49,7 +52,7 @@ def student_interface():
     # Menu Options (Centered and Horizontal)
     menu = st.radio(
         "Select a Section",
-        ["Home Page", "Assignment Tracking", "Report", "Reverse Timer Clock", "Milestone"],
+        ["Home Page", "AI Internship Guidance", "Assignment Tracking", "Report", "Reverse Timer Clock", "Milestone"],
         horizontal=True,  # Display menu options horizontally
         label_visibility="collapsed"
     )
@@ -78,6 +81,100 @@ def student_interface():
         with col2:
             st.subheader("Overall Progress")
             st.progress(0.7)  # 70% progress (constant dummy value)
+
+            # Leaderboard data
+            leaderboard_data = pd.DataFrame({
+                'Student': ['Omer', 'Mudassir', 'Danish', 'Vahaj', 'Zayab'],
+                'Tasks Completed': [8, 6, 5, 7, 4],
+                'Progress %': [80, 60, 50, 70, 40]
+            })
+
+            # Sort by tasks completed
+            leaderboard_data = leaderboard_data.sort_values('Tasks Completed', ascending=False)
+
+            # Display leaderboard
+            st.subheader("Leaderboard")
+            st.dataframe(leaderboard_data)
+
+            # Progress visualization
+            fig = px.bar(
+                leaderboard_data,
+                x='Student',
+                y='Progress %',
+                title='Student Progress Overview'
+            )
+            st.plotly_chart(fig)
+
+            # Individual student details
+            st.subheader("Student Task Details")
+            selected_student = st.selectbox("Select Student", leaderboard_data['Student'])
+
+            # Placeholder for detailed student task tracking
+            task_details = pd.DataFrame({
+                'Task Name': ['Project Proposal', 'Initial Research', 'Midterm Report', 'Final Presentation'],
+                'Status': ['Completed', 'Completed', 'In Progress', 'Not Started']
+            })
+            st.dataframe(task_details)
+
+    elif menu == "AI Internship Guidance":
+        st.header("AI Internship Guidance")
+
+        # Retrieve data from session state
+        name = st.session_state.get("name", "N/A")
+        year = st.session_state.get("year", "N/A")
+        degree = st.session_state.get("degree", "N/A")
+        interested_domain = st.session_state.get("interested_domain", "N/A")
+        programming_familiarity = st.session_state.get("programming_familiarity", "N/A")
+        coding_skills = st.session_state.get("coding_skills", "N/A")
+        additional_info = st.session_state.get("additional_info", "N/A")
+        branch = st.session_state.get("branch", "N/A")
+
+        @st.cache_data
+        def load_courses():
+            return pd.read_csv("courses.csv")
+
+        def generate_internship_prompt(name, degree, branch, year, interested_domain, programming_familiarity,
+                                       coding_skills, additional_info):
+            courses_df = load_courses()
+
+            # Filter the courses based on the student's interested domain
+            relevant_courses = courses_df[
+                courses_df['areas_of_interest'].str.contains(interested_domain, case=False, na=False)]
+
+            # Create the prompt with the necessary details
+            prompt = f"""
+            Hello AI, I am a student seeking guidance on finding suitable internships. Here is my information:
+
+            Name: {name}
+            Degree: {degree} (BSc, BE, B-Tech)
+            Branch: {branch} (e.g., ECE, IT, CSE)
+            Year of Study: {year}
+            Interested Domain: {interested_domain} (e.g., Data Science, Web Development)
+            Programming Familiarity Level: {programming_familiarity} (Beginner, Intermediate, Advanced)
+            Coding Skills: {coding_skills} (e.g., Python, Java, C++)
+            Additional Preferences Regarding Internships: {additional_info}
+
+            Based on my profile and interests in {interested_domain}, I would like to know about the following:
+            1. Relevant Courses: 
+                - {', '.join(relevant_courses['courses_name'].values)} 
+
+            2. Links to Courses:
+                - {', '.join(relevant_courses['courses_links'].values)}
+
+            3. Suggested Mentor(s) for these courses:
+                - {', '.join(relevant_courses['mentors_name'].values)}
+
+            Please guide me with internship opportunities, tips on applying, and any recommended resources or skills I should focus on to enhance my career prospects in {interested_domain}. Additionally, suggest specific companies or programs that align with my {degree} background and my current skill level. Also, provide any networking or project ideas that would be helpful for my growth.
+            """
+            return prompt
+
+        prompt = generate_internship_prompt(name, degree, branch, year, interested_domain, programming_familiarity,
+                                            coding_skills, additional_info)
+        print(prompt)
+        response = stream_ollama_response(prompt)
+        # print(response)
+        st.write(response)
+
 
     elif menu == "Assignment Tracking":
         st.header("Assignment Tracking")
