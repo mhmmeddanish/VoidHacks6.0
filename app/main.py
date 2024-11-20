@@ -50,7 +50,13 @@ def student_middle_page():
     st.write("Please provide additional information to proceed:")
 
     # Input fields
+    name = st.text_input("Name")
     year = st.text_input("Year")
+    degree = st.text_input("Degree")
+    interested_domain = st.text_input("Interested Domain")
+    programming_familiarity = st.text_input("Programming Familiarity")
+    coding_skills = st.text_input("Coding Skills")
+    additional_info = st.text_input("Additional Info")
     branch = st.text_input("Branch")
     areas_of_interest = st.multiselect(
         "Areas of Interest",
@@ -59,9 +65,15 @@ def student_middle_page():
 
     submit_button = st.button("Submit")
     if submit_button:
-        if year and branch and areas_of_interest:
+        if name and year and degree and interested_domain and programming_familiarity and coding_skills and additional_info and branch and areas_of_interest:
             st.session_state.year = year
             st.session_state.branch = branch
+            st.session_state.name = name
+            st.session_state.degree = degree
+            st.session_state.interested_domain = interested_domain
+            st.session_state.programming_familiarity = programming_familiarity
+            st.session_state.coding_skills = coding_skills
+            st.session_state.additional_info = additional_info
             st.session_state.areas_of_interest = areas_of_interest
 
             # Store the recommended course in session state
@@ -75,6 +87,7 @@ def student_middle_page():
             st.rerun()  # Redirect to student interface
         else:
             st.error("Please fill in all the fields.")
+    return name, year, degree, interested_domain, programming_familiarity, coding_skills, additional_info, branch, areas_of_interest
 
 
 # Main app
