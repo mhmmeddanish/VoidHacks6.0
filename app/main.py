@@ -4,14 +4,13 @@ from student_interface import student_interface
 from instructor_interface import instructor_interface
 from mentor_interface import mentor_interface
 from admin_interface import admin_interface
-import pandas as pd
 
 # Dummy user credentials (hard-coded for simplicity)
 users = [
     {"email": "student@example.com", "password": "123", "role": "Student"},
-    {"email": "instructor@example.com", "password": "instructor123", "role": "Instructor"},
-    {"email": "mentor@example.com", "password": "mentor123", "role": "Mentor"},
-    {"email": "admin@example.com", "password": "admin123", "role": "Admin"},
+    {"email": "instructor@example.com", "password": "123", "role": "Instructor"},
+    {"email": "mentor@example.com", "password": "123", "role": "Mentor"},
+    {"email": "admin@example.com", "password": "123", "role": "Admin"},
 ]
 
 # Page configuration
@@ -33,7 +32,7 @@ def login():
     # Left column: Display an image
     with col1:
         image = Image.open("login_image.jpg")  # Replace with your image file path
-        st.image(image, caption="Login Page", use_column_width=True)
+        st.image(image, caption="Login Page", use_container_width=True)  # Updated parameter
 
     # Right column: Login form
     with col2:
@@ -55,7 +54,7 @@ def student_middle_page():
     branch = st.text_input("Branch")
     areas_of_interest = st.multiselect(
         "Areas of Interest",
-        ["AI", "Machine Learning", "Data Science", "Web Development", "Cloud Computing", "Cybersecurity"]
+        ["AI", "Machine Learning", "Data Science", "Web Development", "Cloud Computing", "Cybersecurity", "Development"]
     )
 
     submit_button = st.button("Submit")
@@ -65,31 +64,17 @@ def student_middle_page():
             st.session_state.branch = branch
             st.session_state.areas_of_interest = areas_of_interest
 
-            # Recommend courses based on the areas of interest
-            recommend_courses(areas_of_interest)
+            # Store the recommended course in session state
+            st.session_state.recommended_course = {
+                "name": "Machine Learning A-Z: AI, Python & R + ChatGPT Prize [2024]",
+                "name1": "Python for Data Science and Machine Learning Bootcamp",
+                "link": "https://example.com/ml-course",
+                "link1": "https://example.com/mlccc-course"
+            }
             st.session_state.middle_page_done = True
+            st.rerun()  # Redirect to student interface
         else:
             st.error("Please fill in all the fields.")
-
-
-# Function to recommend courses based on areas of interest
-def recommend_courses(areas_of_interest):
-    try:
-        # Load the courses.csv file
-        df = pd.read_csv("courses.csv")
-
-        # Filter rows where the areas of interest match the user's input
-        matching_courses = df[
-            df["areas_of_interest"].apply(lambda x: any(area in x.split(",") for area in areas_of_interest))]
-
-        if not matching_courses.empty:
-            st.subheader("Recommended Courses")
-            for _, row in matching_courses.iterrows():
-                st.write(f"- [{row['course_name']}]({row['course_link']})")
-        else:
-            st.info("No matching courses found.")
-    except Exception as e:
-        st.error(f"Error loading courses: {e}")
 
 
 # Main app
